@@ -1,3 +1,10 @@
+/**
+ * Returns a random integer between min (inclusive) and max (inclusive)
+ */
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 class Entity {
   constructor() {
       this.x = 2;
@@ -39,19 +46,20 @@ class Enemy extends Entity {
 
   update(dt) {
     super.update(this.x, this.y);
-    this.movedOffBoardX ? this.x = - 1 : this.x += dt;
+    let ranNumX = getRandomInt(-4,-1);
+    this.movedOffBoardX ? this.x = ranNumX : this.x += dt;
   }
 }
-
 
 // Now instantiate your objects.
 const player = new Player();
 
-
 // Place all enemy objects in an array called allEnemies
 const allEnemies = [];
-for (let i = 0; i < 3; i++) {
-  allEnemies.push(new Enemy(0,i+1));
+for (let i = 0; i < 8; i++) {
+  let ranNumX = getRandomInt(-5,-1)
+  let ranNumY = getRandomInt(1,4)
+  allEnemies.push(new Enemy(ranNumX,ranNumY));
 }
 
 // This listens for key presses and sends the keys to your
