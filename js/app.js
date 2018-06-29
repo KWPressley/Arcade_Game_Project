@@ -16,6 +16,16 @@ class Entity {
     this.movedOffBoardY = this.y < 1;
   }
 
+  checkCollisions(playerOrEnemy) {
+    if (this.y === playerOrEnemy.y) {
+      if (this.x >= playerOrEnemy.x - 0.5 && this.x <= playerOrEnemy.x + 0.5) {
+        return true;
+      }
+    } else {
+      return false;
+    }
+  }
+
   render() {
     ctx.drawImage(Resources.get(this.sprite), this.x * 101, this.y * 85);
   }
@@ -31,8 +41,23 @@ class Player extends Entity {
     // TODO:  write update
   }
 
-  handleInput() {
-    // TODO:  write handleInput
+  handleInput(input) {
+    switch (input) {
+      case 'left':
+        this.x = this.x > 0 ? this.x - 1 : this.x;
+        break;
+      case 'up':
+        this.y = this.y > 0 ? this.y - 1 : this.y;
+        break;
+      case 'right':
+        this.x = this.x < 4 ? this.x + 1 : this.x;
+        break;
+      case 'down':
+        this.y = this.y < 5 ? this.y + 1 : this.y;
+        break;
+      default:
+        break;
+    }
   }
 }
 
@@ -71,6 +96,5 @@ document.addEventListener('keyup', function(e) {
         39: 'right',
         40: 'down'
     };
-
-//    player.handleInput(allowedKeys[e.keyCode]);
+    player.handleInput(allowedKeys[e.keyCode]);
 });
