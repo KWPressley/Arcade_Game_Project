@@ -1,10 +1,20 @@
 /**
+ * Modal elements
+ */
+const modal = document.querySelector('.my-modal'),
+  modalClose = document.querySelector('.modal-close'),
+  modalText = document.querySelector('.modal-text');
+
+/**
  * Returns a random integer between min (inclusive) and max (inclusive)
  */
 function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+/**
+ * Define Entity Object
+ */
 class Entity {
   constructor() {
       this.x = 2;
@@ -31,6 +41,9 @@ class Entity {
   }
 }
 
+/**
+ * Define Player Object based on Entity
+ */
 class Player extends Entity {
   constructor() {
     super();
@@ -38,29 +51,42 @@ class Player extends Entity {
   }
 
   update() {
-    // TODO:  write update
+    /*  not used at this time */
+  }
+
+  render() {
+    super.render();
+    /* check to see if player has moved to top row - if so, player won game! */
+    if (this.y === 0) {
+      displayGameOver('Winner');
+    }
   }
 
   handleInput(input) {
-    switch (input) {
-      case 'left':
-        this.x = this.x > 0 ? this.x - 1 : this.x;
-        break;
-      case 'up':
-        this.y = this.y > 0 ? this.y - 1 : this.y;
-        break;
-      case 'right':
-        this.x = this.x < 4 ? this.x + 1 : this.x;
-        break;
-      case 'down':
-        this.y = this.y < 5 ? this.y + 1 : this.y;
-        break;
-      default:
-        break;
+    if (!stopKeyBoard) {
+      switch (input) {
+        case 'left':
+          this.x = this.x > 0 ? this.x - 1 : this.x;
+          break;
+        case 'up':
+          this.y = this.y > 0 ? this.y - 1 : this.y;
+          break;
+        case 'right':
+          this.x = this.x < 4 ? this.x + 1 : this.x;
+          break;
+        case 'down':
+          this.y = this.y < 5 ? this.y + 1 : this.y;
+          break;
+        default:
+          break;
+      }
     }
   }
 }
 
+/**
+ * Define Enemy Object based on Entity
+ */
 class Enemy extends Entity {
   constructor(x,y) {
     super();
@@ -98,3 +124,45 @@ document.addEventListener('keyup', function(e) {
     };
     player.handleInput(allowedKeys[e.keyCode]);
 });
+
+
+// Modal processes
+//
+// Open the modal
+openModal = function(text) {
+  modalText.textContent = text;
+  modal.style.display = 'block';
+  document.querySelector('#btnReset').style.display = 'inline-flex';
+};
+
+// When the user clicks on <span> (x), close the modal
+modalClose.onclick = function() {
+  modal.style.display = 'none';
+};
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function() {
+  if (event.target == modal) {
+      modal.style.display = 'none';
+  }
+};
+
+//
+// reset the board to start a new game
+//
+
+btnReset.addEventListener('click', function () {
+  location.reload(true);
+});
+
+//
+//  Function to set up modal for winning or losing game
+//
+function displayGameOver(winOrLose) {
+  gameOver = true;
+  let textWinner = document.querySelector('.modal-winner');
+  textWinner.textContent = " -- Click Reset Button to play again!";
+
+  openModal('CONGRATULATIONS - We Have a WINNER!');
+
+}

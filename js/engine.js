@@ -13,6 +13,14 @@
  * writing app.js a little simpler to work with.
  */
 
+ /**
+  * Variable for running game - check if game gameOver
+  *
+  */
+
+let gameOver = false;
+let stopKeyBoard = false;
+
 var Engine = (function(global) {
     /* Predefine the variables we'll be using within this scope,
      * create the canvas element, grab the 2D context for that canvas
@@ -32,30 +40,34 @@ var Engine = (function(global) {
      * and handles properly calling the update and render methods.
      */
     function main() {
-        /* Get our time delta information which is required if your game
-         * requires smooth animation. Because everyone's computer processes
-         * instructions at different speeds we need a constant value that
-         * would be the same for everyone (regardless of how fast their
-         * computer is) - hurray time!
-         */
-        var now = Date.now(),
-            dt = (now - lastTime) / 1000.0;
+        /* check if game over  - stop execution */
+        if (!gameOver){
 
-        /* Call our update/render functions, pass along the time delta to
-         * our update function since it may be used for smooth animation.
-         */
-        update(dt);
-        render();
+          /* Get our time delta information which is required if your game
+           * requires smooth animation. Because everyone's computer processes
+           * instructions at different speeds we need a constant value that
+           * would be the same for everyone (regardless of how fast their
+           * computer is) - hurray time!
+           */
+          var now = Date.now(),
+              dt = (now - lastTime) / 1000.0;
 
-        /* Set our lastTime variable which is used to determine the time delta
-         * for the next time this function is called.
-         */
-        lastTime = now;
+          /* Call our update/render functions, pass along the time delta to
+           * our update function since it may be used for smooth animation.
+           */
+          update(dt);
+          render();
 
-        /* Use the browser's requestAnimationFrame function to call this
-         * function again as soon as the browser is able to draw another frame.
-         */
-        win.requestAnimationFrame(main);
+          /* Set our lastTime variable which is used to determine the time delta
+           * for the next time this function is called.
+           */
+          lastTime = now;
+
+          /* Use the browser's requestAnimationFrame function to call this
+           * function again as soon as the browser is able to draw another frame.
+           */
+          win.requestAnimationFrame(main);
+        }
     }
 
     /* This function does some initial setup that should only occur once,
@@ -82,15 +94,6 @@ var Engine = (function(global) {
         checkCollisions();
     }
 
-    function checkCollisions() {
-      allEnemies.forEach(enemy => {
-        if (enemy.checkCollisions(player) || player.checkCollisions(enemy)) {
-          player.x = 2;
-          player.y = 5;
-        }
-      });
-    }
-
     /* This is called by the update function and loops through all of the
      * objects within your allEnemies array as defined in app.js and calls
      * their update() methods. It will then call the update function for your
@@ -104,6 +107,29 @@ var Engine = (function(global) {
             enemy.update(dt);
         });
         player.update();
+    }
+
+    /* This function checks for collisions - failed attempt to cross the road
+     * This calls both the player and enemies check to see if either has
+     * collided.   If collision occurs, player moves back to original position.
+     */
+    function checkCollisions() {
+      allEnemies.forEach(enemy => {
+        if (enemy.checkCollisions(player) || player.checkCollisions(enemy)) {
+          debugger;
+          let saveSprite = player.sprite;
+          player.sprite = 'images/bang.png';
+          stopKeyBoard = true;
+          setTimeout (function() {
+            debugger;
+            stopKeyBoard = false;
+            player.sprite = saveSprite;
+            // removeLife();
+          }, 2000);
+          player.x = 2;
+          player.y = 5;
+        }
+      });
     }
 
     /* This function initially draws the "game level", it will then call
@@ -185,7 +211,8 @@ var Engine = (function(global) {
         'images/water-block.png',
         'images/grass-block.png',
         'images/enemy-bug.png',
-        'images/char-boy.png'
+        'images/char-boy.png',
+        'images/bang.png'
     ]);
     Resources.onReady(init);
 
