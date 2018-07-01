@@ -14,10 +14,11 @@
  */
 
  /**
-  * Variable for running game - check if game gameOver
+  * Variables for running game - used for various features
   *
   */
 
+let lives = 3;
 let gameOver = false;
 let stopKeyBoard = false;
 
@@ -75,7 +76,6 @@ var Engine = (function(global) {
      * game loop.
      */
     function init() {
-        reset();
         lastTime = Date.now();
         main();
     }
@@ -109,25 +109,35 @@ var Engine = (function(global) {
         player.update();
     }
 
-    /* This function checks for collisions - failed attempt to cross the road
+    /* These functions checks for collisions - failed attempt to cross the road
      * This calls both the player and enemies check to see if either has
      * collided.   If collision occurs, player moves back to original position.
+     * One checks to see if a collision occured
+     * If so, reset the player to home position and reduce lives.
+     * Last function will reduce the lives and if lives = 0 - lose game.
      */
+
+    function updateLives() {
+      lives -= 1;
+      document.querySelector('.lives').innerText = lives;
+      if (lives <= 0) {
+        displayGameOver('Loser');
+      }
+    }
+
     function checkCollisions() {
       allEnemies.forEach(enemy => {
         if (enemy.checkCollisions(player) || player.checkCollisions(enemy)) {
-          debugger;
           let saveSprite = player.sprite;
           player.sprite = 'images/bang.png';
           stopKeyBoard = true;
           setTimeout (function() {
-            debugger;
             stopKeyBoard = false;
             player.sprite = saveSprite;
-            // removeLife();
           }, 2000);
           player.x = 2;
           player.y = 5;
+          updateLives();
         }
       });
     }
@@ -192,14 +202,6 @@ var Engine = (function(global) {
         });
 
         player.render();
-    }
-
-    /* This function does nothing but it could have been a good place to
-     * handle game reset states - maybe a new game menu or a game over screen
-     * those sorts of things. It's only called once by the init() method.
-     */
-    function reset() {
-        // noop
     }
 
     /* Go ahead and load all of the images we know we're going to need to

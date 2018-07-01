@@ -98,7 +98,8 @@ class Enemy extends Entity {
   update(dt) {
     super.update(this.x, this.y);
     let ranNumX = getRandomInt(-4,-1);
-    this.movedOffBoardX ? this.x = ranNumX : this.x += dt;
+    let ranDt = Math.random() * dt * 2;
+    this.movedOffBoardX ? this.x = ranNumX : this.x += ranDt;
   }
 }
 
@@ -125,6 +126,17 @@ document.addEventListener('keyup', function(e) {
     player.handleInput(allowedKeys[e.keyCode]);
 });
 
+//
+// reset the board to start a new game
+//
+
+function reset() {
+  lives = 3;
+  gameOver = false;
+  stopKeyBoard = false;
+  document.location.href = '';
+}
+
 
 // Modal processes
 //
@@ -138,31 +150,25 @@ openModal = function(text) {
 // When the user clicks on <span> (x), close the modal
 modalClose.onclick = function() {
   modal.style.display = 'none';
+  reset();
 };
-
-// When the user clicks anywhere outside of the modal, close it
-window.onclick = function() {
-  if (event.target == modal) {
-      modal.style.display = 'none';
-  }
-};
-
-//
-// reset the board to start a new game
-//
 
 btnReset.addEventListener('click', function () {
-  location.reload(true);
+  reset();
 });
 
 //
 //  Function to set up modal for winning or losing game
 //
 function displayGameOver(winOrLose) {
+  let modalMessage = "";
   gameOver = true;
   let textWinner = document.querySelector('.modal-winner');
   textWinner.textContent = " -- Click Reset Button to play again!";
-
-  openModal('CONGRATULATIONS - We Have a WINNER!');
-
+  if (winOrLose === 'Winner') {
+    modalMessage = 'CONGRATULATIONS - We Have a WINNER!';
+  } else {
+    modalMessage = 'SORRY - Better Luck Next Time';
+  }
+  openModal(modalMessage);
 }
